@@ -19,7 +19,7 @@ public class Snippet {
 		return new InsecureTrustManager();
 	}
 
-	class InsecureTrustManager implements X509TrustManager {
+	static class InsecureTrustManager implements X509TrustManager {
 		@Override
 		public X509Certificate[] getAcceptedIssuers() {
 			return null;
