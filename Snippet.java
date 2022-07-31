@@ -36,6 +36,23 @@ public class Snippet {
 		}
 	}
 
+	static class SecureTrustManager implements X509TrustManager {
+		@Override
+		public X509Certificate[] getAcceptedIssuers() {
+			return null;
+		}
+
+		@Override
+		public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+			throw new CertificateException();
+		}
+
+		@Override
+		public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+
+		}
+	}
+
 	public static void main(String[] args) throws Exception {
 		{
 			SSLContext context = SSLContext.getInstance("TLS");
@@ -49,6 +66,12 @@ public class Snippet {
 			TrustManager[] trustManager = new TrustManager[] { buildTrustManager() };
 			context.init(null, trustManager, null); // BAD: insecure trust manager is used here! (detect all calls to
 													// context.init that have an insecure trust manager.
+		}
+
+		{
+			SSLContext context = SSLContext.getInstance("TLS");
+			TrustManager[] trustManager = new TrustManager[] { new SecureTrustManager() };
+			context.init(null, trustManager, null); // GOOD: This TrustManager ALWAYS throws, thereby accepting no certificate at all.
 		}
 
 		{
